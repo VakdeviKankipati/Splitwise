@@ -14,8 +14,12 @@ public class Group extends BaseModel{
 
     private String name;
     private String description;
-
     @ManyToMany
+    private List<User> users;
+    @ManyToMany
+    private List<User> admins;
+
+    /*@ManyToMany
     @JoinTable(name = "user_join")
     private List<User> users1;
 
@@ -23,5 +27,5 @@ public class Group extends BaseModel{
     private User createdBy;
 
     @OneToMany
-    private List<Expense> expenses;
+    private List<Expense> expenses;*/
 }

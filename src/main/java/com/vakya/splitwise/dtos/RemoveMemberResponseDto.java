@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SettleUpGroupRequestDto {
-    private long groupId;
+public class RemoveMemberResponseDto {
+    private ResponseStatus responseStatus;
 }

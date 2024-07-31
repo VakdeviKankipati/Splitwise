@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -12,19 +13,23 @@ import java.util.List;
 public class Expense extends BaseModel{
 
     private String description;
-    private int amount;
+    private double amount;
+    private Date addedAt;
+    private String proofUrl;
 
-    @ManyToOne
+    /*@ManyToOne
     private User createdBy;
 
     @Enumerated(EnumType.ORDINAL)
     private ExpenseType expenseType;
-
-    @OneToMany
-    private List<ExpenseUser> expenseUsers;
-
     @ManyToOne
     private Group group;
+     */
+
+    @OneToMany(mappedBy = "expense", fetch = FetchType.EAGER)
+    private List<ExpenseUser> expenseUsers;
+
+
 
 }
 

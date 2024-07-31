@@ -1,9 +1,6 @@
 package com.vakya.splitwise.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,12 +8,12 @@ import lombok.Setter;
 @Setter
 @Entity
 public class ExpenseUser extends BaseModel{
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Expense expense;
 
-    private int amount;
+    private double amount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
     @Enumerated(EnumType.ORDINAL)
