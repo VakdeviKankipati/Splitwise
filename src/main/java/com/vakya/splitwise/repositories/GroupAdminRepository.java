@@ -14,4 +14,7 @@ public interface GroupAdminRepository extends JpaRepository<GroupAdmin, Long> {
 
     List<GroupAdmin> findAllByGroupId(Long groupId);
 
+    void deleteByGroupId(Long groupId);
+
+
 }

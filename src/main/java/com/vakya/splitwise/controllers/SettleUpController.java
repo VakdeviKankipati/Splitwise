@@ -5,10 +5,15 @@ import com.vakya.splitwise.models.Expense;
 import com.vakya.splitwise.models.Transaction;
 import com.vakya.splitwise.services.SettleUpService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("/api/settle-up")
 public class SettleUpController {
 
     private SettleUpService settleUpService;
@@ -18,7 +23,8 @@ public class SettleUpController {
         this.settleUpService=settleUpService;
     }
 
-    public SettleUpGroupResponseDto settleGroup(SettleUpGroupRequestDto dto){
+    @PostMapping("/group")
+    public SettleUpGroupResponseDto settleGroup(@RequestBody SettleUpGroupRequestDto dto){
         SettleUpGroupResponseDto responseDto = new SettleUpGroupResponseDto();
         try {
             List<Transaction> transactions = settleUpService.settleGroup(dto.getGroupId());
@@ -30,7 +36,8 @@ public class SettleUpController {
         return responseDto;
     }
 
-    public SettleUpGroupResponseDto settleUser(SettleUpUserRequestDto requestDto){
+    @PostMapping("/users")
+    public SettleUpGroupResponseDto settleUser(@RequestBody SettleUpUserRequestDto requestDto){
         SettleUpGroupResponseDto responseDto = new SettleUpGroupResponseDto();
         try{
             List<Transaction> transactions = settleUpService.settleUser(requestDto.getUserId());

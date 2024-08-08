@@ -13,6 +13,7 @@ import com.vakya.splitwise.repositories.GroupRepository;
 import com.vakya.splitwise.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+
 import java.util.*;
 
 @Service
@@ -29,6 +30,63 @@ public class GroupServiceImpl implements GroupService{
         this.groupAdminRepository = groupAdminRepository;
         this.groupMemberRepository = groupMemberRepository;
     }
+
+    @Override
+    public Group createGroup(String groupName, String description, long userId) throws InvalidUserException {
+        if (groupName == null || groupName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Group name cannot be null or empty");
+        }
+        if (description == null) {
+            throw new IllegalArgumentException("Description cannot be null");
+        }
+        User user = userRepository.findById(userId).orElseThrow(() -> new InvalidUserException("The user trying to access the group is not a valid user"));
+
+        Group group = new Group();
+        group.setName(groupName);
+        group.setCreate_At(new Date());
+        group.setDescription(description);
+        //group = groupRepository.save(group);
+        try {
+            group = groupRepository.save(group);
+
+            GroupAdmin groupAdmin = new GroupAdmin();
+            groupAdmin.setGroup(group);
+            groupAdmin.setAdmin(user);
+            groupAdmin.setAddedBy(user);
+
+            groupAdminRepository.save(groupAdmin);
+
+            return group;
+        } catch (Exception e) {
+           // logger.error("Error creating group", e);
+            throw new RuntimeException("Error creating group", e);
+        }
+
+        /*GroupAdmin groupAdmin = new GroupAdmin();
+        groupAdmin.setGroup(group);
+        groupAdmin.setAdmin(user);
+        groupAdmin.setAddedBy(user);
+        groupAdminRepository.save(groupAdmin);
+        return group;*/
+    }
+
+    @Override
+    public void deleteGroup(long groupId, long userId) throws InvalidGroupException, UnAuthorizedAccessException, InvalidUserException {
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new InvalidGroupException("Group not found"));
+
+        userRepository.findById(userId).orElseThrow(() -> new InvalidUserException("The user trying to access the group is not a valid user"));
+
+        Optional<GroupAdmin> groupAdminOptional = groupAdminRepository.findByGroupIdAndAdminId(groupId, userId);
+
+        if(groupAdminOptional.isEmpty()){
+            throw new UnAuthorizedAccessException("The given user is not an admin of the group");
+        }
+
+        groupAdminRepository.deleteByGroupId(group.getId());
+        groupMemberRepository.deleteByGroupId(group.getId());
+        groupRepository.delete(group);
+    }
+
     @Override
     public GroupMember addMember(long groupId, long adminId, long userId) throws InvalidGroupException, InvalidUserException, UnAuthorizedAccessException {
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new InvalidGroupException("Group not found"));
